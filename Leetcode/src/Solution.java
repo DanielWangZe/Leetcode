@@ -685,6 +685,8 @@ class Solution{
         return dp[n];
     }
 
+    // leetcode 20 Valid Parentheses
+    // stack - peek vs pop
     public boolean isValid(String s){
         char[] chars = s.toCharArray();
         if(chars.length % 2 != 0) return false;
@@ -1014,6 +1016,8 @@ class Solution{
         return String.copyValueOf(s);
     }
 
+    // leetcode 15 three sum
+    // sort + two sum(two pointer)
     public List<List<Integer>> threeSum(int[] nums) {
         List<List<Integer>> res = new ArrayList<>();
         if(nums == null || nums.length == 0) return res;
@@ -1246,6 +1250,164 @@ class Solution{
         }
         return dp.lastEntry().getValue();
     }
+
+    public int maximumSum(int[] a) {
+        int n = a.length;
+        int[] maxEndHere = new int[n], maxStartHere = new int[n];
+        maxEndHere[0] = a[0];
+        int max = a[0];
+        for (int i = 1; i < n; ++i) {
+            maxEndHere[i] = Math.max(a[i], maxEndHere[i - 1] + a[i]);
+            max = Math.max(max, maxEndHere[i]);
+        }
+        maxStartHere[n - 1] = a[n - 1];
+        for (int i = n - 2; i >= 0; --i) {
+            maxStartHere[i] = Math.max(a[i], maxStartHere[i + 1] + a[i]);
+        }
+
+        for(int i = 1; i < n - 1; ++i) {
+            max = Math.max(max, maxEndHere[i - 1] + maxStartHere[i + 1]);
+        }
+
+        return max;
+    }
+
+    public int longestCommonSubsequence(String text1, String text2) {
+        int m = text1.length();
+        int n = text2.length();
+        int[][] dp = new int[m+1][n+1];
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if(text1.charAt(i) == text2.charAt(j)) {
+                    dp[i+1][j+1] = dp[i][j] + 1;
+                }
+                else {
+                    dp[i+1][j+1] = Math.max(dp[i][j+1], dp[i+1][j]);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    public int numRollsToTarget(int d, int f, int target) {
+        double[][] dp = new double[d + 1][target + 1];
+        dp[0][0] = 1;
+        for (int i = 1; i <= d; ++i) {
+            for (int j = 1; j <= f; ++j) {
+                for (int k = j; k <= target; ++k) {
+                    dp[i][k] = (dp[i][k] + dp[i - 1][k - j]) % (1e9 + 7);
+                }
+            }
+        }
+        return (int)dp[d][target];
+    }
+
+    public int tribonacci(int n) {
+        if (n == 0) return n;
+        int t0 = 0, t1 = 1, t2 = 1, t = 1;
+        for (int i = 3; i <=n; ++i) {
+            t = t0 + t1 + t2;
+            t0 = t1;
+            t1 = t2;
+            t2 = t;
+        }
+        return t;
+    }
+
+    // leetcode 325
+    public int maxSubArrayLen(int[] nums, int k) {
+        Map<Integer, Integer> map = new HashMap<>();
+        map.put(0, -1);
+        int sum = 0, maxLen = 0;
+        for (int i = 0; i < nums.length; ++i) {
+            sum += nums[i];
+            if (map.containsKey(sum - k)) {
+                maxLen = Math.max(maxLen, i - map.get(sum - k));
+            }
+            map.putIfAbsent(sum, i);
+        }
+        return maxLen;
+    }
+
+    // leetcode 395
+    public int longestSubstring(String s, int k) {
+        return 0;
+    }
+
+    // leetcode 159
+    public int lengthOfLongestSubstringTwoDistinct(String s) {
+        int res = 0, left = 0;
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < s.length(); ++i) {
+            Character c = s.charAt(i);
+            map.put(c, map.getOrDefault(c, 0) + 1);
+            while (map.size() > 2) {
+                map.put(s.charAt(left), map.get(s.charAt(left) - 1));
+                if (map.get(s.charAt(left)) == 0) map.remove(s.charAt(left));
+                ++left;
+            }
+            res = Math.max(res, i - left + 1);
+        }
+        return res;
+    }
+
+    // leetcode 904 fruit into baskets
+    public int totalFruit(int[] tree) {
+        int res = 0, left = 0;
+        Map<Integer, Integer> map = new HashMap<>();
+        for (int i = 0; i < tree.length; ++i) {
+            map.put(tree[i], map.getOrDefault(tree[i], 0) + 1);
+            while (map.size() > 2) {
+                map.put(tree[left], map.get(tree[left]) - 1);
+                if (map.get(tree[left]) == 0) map.remove(tree[left]);
+                ++left;
+            }
+            res = Math.max(res, i - left + 1);
+        }
+        return res;
+    }
+
+    // leetcode 42 trapping rain water
+    // dynamic programming from left and right
+    public int trap(int[] height) {
+        return 0;
+    }
+
+    // leetcode 3 longest substring without repeating charaters
+    // sliding window + hash map
+    public int lengthOfLongestSubstring(String s) {
+        int left = -1, res = 0, n = s.length();
+        Map<Character, Integer> map = new HashMap<>();
+        for (int i = 0; i < n; ++i) {
+            char key = s.charAt(i);
+            if (map.containsKey(key) && map.get(key) < i) {
+                left = map.get(key);
+            }
+            map.put(key, i);
+            res = Math.max(res, i - left);
+        }
+        return res;
+    }
+
+    // leetcode 56 merge intervals
+    public int[][] merge(int[][] intervals) {
+        if (intervals.length <= 1) return intervals;
+        Arrays.sort(intervals, (i1, i2) -> Integer.compare(i1[0], i2[0]));
+
+        List<int[]> result = new ArrayList<>();
+        int[] newInterval = intervals[0];
+        result.add(newInterval);
+        for (int[] interval: intervals) {
+            if (interval[0] <= newInterval[1]) {
+                newInterval[1] = Math.max(interval[1], newInterval[1]);
+            } else {
+                newInterval = interval;
+                result.add(newInterval);
+            }
+        }
+        return result.toArray(new int[result.size()][]);
+    }
+
 }
 
 
