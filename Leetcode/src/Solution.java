@@ -416,6 +416,8 @@ class Solution{
         return row;
     }
 
+    // leetcode 206 reverse linked list - recursion
+    // p never change since the first return, head keep changing
     public ListNode reverseList_Recursion(ListNode head){
         if(head == null || head.next == null) return head;
         ListNode p = reverseList_Recursion(head.next);
@@ -424,6 +426,7 @@ class Solution{
         return p;
     }
 
+    // leetcode 206 reverse linked list - iteratively
     public ListNode reverseList_Iterative(ListNode head){
         ListNode curr = head;
         ListNode prev = null;
@@ -499,6 +502,8 @@ class Solution{
         }
     }
 
+    // leetcode 11 container with most water
+    // two pointer
     public int maxArea(int[] height){
         int res = 0, i = 0, j = height.length - 1;
         while(i < j){
@@ -526,6 +531,11 @@ class Solution{
         return ans;
     }
 
+    // leetcode 560 subarray sum equals K
+    // pre sum -> idea is to get sum[0, i-1] and sum[0, j] so we can get sum[i, j]
+    // it is for those (sum - k) == 0 calculations which are valid subarrays but need to get counted.
+    // e.g. if k = 7 and sum = 7 (at second element for array is : 3, 4, 3, 8) at some iteration.....
+    // then sum - k = 0....this 0 will get counted in statement result += preSum.get(sum - k)
     public int subarraySum(int[] nums, int k){
         int sum = 0, result = 0;
         Map<Integer, Integer> preSum = new HashMap<>();
@@ -1408,6 +1418,61 @@ class Solution{
         return result.toArray(new int[result.size()][]);
     }
 
+    // leetcode 49 group anagrams
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String, List<String>> map = new HashMap<>();
+        for (String s: strs) {
+            int[] arr = new int[26];
+            for (char c: s.toCharArray()) {
+                ++arr[c - 'a'];
+            }
+            String key = Arrays.toString(arr);
+            List<String> value = map.getOrDefault(key, new ArrayList<String>());
+            value.add(s);
+            map.put(key, value);
+        }
+        return new ArrayList<>(map.values());
+    }
+
+    // leetcode 54 spiral matrix
+    public List<Integer> spiralOrder(int[][] matrix) {
+        List<Integer> res = new ArrayList<>();
+        if (matrix == null || matrix.length == 0) return res;
+        int m = matrix.length, n = matrix[0].length;
+        int up = 0, down = m - 1, left = 0, right = n - 1;
+        while (true) {
+            for (int j = left; j <= right; ++j) res.add(matrix[up][j]);
+            if (++up > down) break;
+            for (int j = up; j <= down; ++j) res.add(matrix[j][right]);
+            if (--right < left) break;
+            for (int j = right; j >= left; --j) res.add(matrix[down][j]);
+            if (--down < up) break;
+            for (int j = down; j >= up; --j) res.add(matrix[j][left]);
+            if (++left > right) break;
+        }
+        return res;
+    }
+
+    // leetcode 91 decode ways
+    // dynamic programming - check if s[i] is 0 or not. basic idea is dp[i] = dp[i-1] + dp[i-2]
+    public int numDecodings(String s) {
+        if (s == null || s.length() == 0) return 0;
+        int[] dp = new int[s.length() + 1];
+        dp[0] = 1;
+        for (int i = 1; i < dp.length; ++i) {
+            dp[i] = s.charAt(i - 1) == '0' ? 0 : dp[i - 1];
+            if (i > 1 && (s.charAt(i - 2) == '1' || (s.charAt(i - 2) == '2' && s.charAt(i - 1) <= '6'))) {
+                dp[i] += dp[i - 2];
+            }
+        }
+        return dp[dp.length - 1];
+    }
+
+    // leetcode 88 merge sorted array
+    // merge from the back
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+
+    }
 }
 
 
