@@ -278,6 +278,37 @@ class Solution{
         return result;
     }
 
+    // leecode 323.Number of Connected Components in an Undirected Graph
+    // adjacency list + DFS
+    public int countComponent(int n, int[][] edges) {
+        Boolean[] visited = new Boolean[n];
+        List<ArrayList<Integer>> list = new ArrayList<>(n);
+        // build adjacency list first
+        for (int[] edge: edges) {
+            int from = edge[0];
+            int to = edge[1];
+            list.get(from).add(to);
+            list.get(to).add(from);
+        }
+
+        int res = 0;
+        for (int i = 0; i < n; ++i) {
+            if (!visited[i]) {
+                ++res;
+                dfs(list, visited, i);
+            }
+        }
+        return res;
+    }
+
+    public void dfs(List<ArrayList<Integer>> l, Boolean[] v, Integer i) {
+        if (v[i]) return;
+        v[i] = true;
+        for (int j = 0; j < l.get(i).size(); ++j) {
+            dfs(l, v, l.get(i).get(j));
+        }
+    }
+
     public int maxDepth_topDown(TreeNode root){
         //pre order - top down
         int d = 0;
@@ -620,8 +651,10 @@ class Solution{
         return res;
     }
 
+    // leetcode 200 Numbers of islands
+    // DFS
     public int numIslands(char[][] grid){
-        if(grid == null || grid.length == 0) return 0;
+        if (grid == null || grid.length == 0) return 0;
         int y = grid.length;
         int x = grid[0].length;
         int ans = 0;
@@ -634,6 +667,12 @@ class Solution{
             }
         }
         return ans;
+    }
+
+    // leetcode 547 Friend Circles
+    // DFS
+    public int findCircleNum(int[][] M) {
+        return 0;
     }
 
     private void dfs(int i, int j, int y, int x, char[][] grid){
@@ -1282,6 +1321,9 @@ class Solution{
         return max;
     }
 
+    // leetcode 1143 Longest Common Subsequence
+    // If a[i] == b[j], LCS for i and j would be 1 plus LCS till the i-1 and j-1 indexes.
+    // Otherwise, we will take the largest LCS if we skip a character from one of the string (max(m[i - 1][j], m[i][j - 1]).
     public int longestCommonSubsequence(String text1, String text2) {
         int m = text1.length();
         int n = text2.length();
@@ -1299,6 +1341,9 @@ class Solution{
         return dp[m][n];
     }
 
+    // leetcode 1155 Number of Dice Rolls With Target Sum
+    // dynamic programming
+    // dp[0][0] = 1, dp[i][t] = sum(dp[i-1][target - j]), where 1<=j<=min(f, target)
     public int numRollsToTarget(int d, int f, int target) {
         double[][] dp = new double[d + 1][target + 1];
         dp[0][0] = 1;
@@ -1312,6 +1357,7 @@ class Solution{
         return (int)dp[d][target];
     }
 
+    // leetcode 1137 N-th Tribonacci Number, iterative solution
     public int tribonacci(int n) {
         if (n == 0) return n;
         int t0 = 0, t1 = 1, t2 = 1, t = 1;
@@ -1324,7 +1370,7 @@ class Solution{
         return t;
     }
 
-    // leetcode 325
+    // leetcode 325 maximum size subarray sum equals k
     public int maxSubArrayLen(int[] nums, int k) {
         Map<Integer, Integer> map = new HashMap<>();
         map.put(0, -1);
@@ -1344,7 +1390,7 @@ class Solution{
         return 0;
     }
 
-    // leetcode 159
+    // leetcode 159 longest substring with at most two distinct characters
     public int lengthOfLongestSubstringTwoDistinct(String s) {
         int res = 0, left = 0;
         Map<Character, Integer> map = new HashMap<>();
@@ -1473,6 +1519,37 @@ class Solution{
     public void merge(int[] nums1, int m, int[] nums2, int n) {
 
     }
+
+    // leetcode 332 reconstruct itinerary
+    public List<String> findItinerary(List<List<String>> tickets) {
+        return null;
+    }
+
+    // leetcode 207 course schedule
+    // leetcode 210 course schedule II
+
+
+    // leetcode 380 insert delete getrandom O(1)
+
+    // leetcode 322 coin change
+    public int coinChange(int[] coins, int amount) {
+        if (amount == 0) return 0;
+        if (coins.length == 0 || amount < 0) return -1;
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, amount + 1);
+
+        for (int i = 1; i <= amount; ++i) {
+            for (int j = 0; j < coins.length; ++j) {
+                if (i >= coins[j]) {
+                    dp[i] = Math.min(dp[i], dp[i - coins[j]] + 1);
+                }
+            }
+        }
+        int res = dp[amount] > amount ? -1 : dp[amount];
+        return res;
+    }
+
+
 }
 
 
